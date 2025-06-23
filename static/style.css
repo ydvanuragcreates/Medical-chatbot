@@ -1,0 +1,201 @@
+/* --- Google Font Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* --- CSS Variables for Theme --- */
+:root {
+    --primary-bg: #f7f9fc;
+    --container-bg: #ffffff;
+    --accent-color: #007bff;
+    --accent-hover: #0056b3;
+    --bot-message-bg: #e9f2ff;
+    --user-message-bg: #f1f1f1;
+    --text-primary: #333333;
+    --text-secondary: #ffffff;
+    --disclaimer-text: #888888;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* --- General & Reset Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- Main Chat Container --- */
+.chat-container {
+    width: 100%;
+    max-width: 700px;
+    background-color: var(--container-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px var(--shadow-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 90vh;
+    max-height: 800px;
+}
+
+/* --- Chat Header --- */
+.chat-header {
+    background-color: var(--accent-color);
+    color: var(--text-secondary);
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+}
+
+.chat-header h1 {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.chat-header i {
+    margin-right: 10px;
+}
+
+
+/* --- Chat Window --- */
+.chat-window {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Modern Scrollbar Styling */
+.chat-window::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-window::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.chat-window::-webkit-scrollbar-thumb {
+    background: #c5c5c5;
+    border-radius: 10px;
+}
+.chat-window::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* --- Message Bubbles --- */
+.message {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    max-width: 80%;
+}
+
+.message-content {
+    padding: 12px 16px;
+    border-radius: 18px;
+    line-height: 1.5;
+}
+
+.bot-message {
+    align-self: flex-start;
+}
+.bot-message .message-content {
+    background-color: var(--bot-message-bg);
+    border-top-left-radius: 4px;
+}
+
+.user-message {
+    align-self: flex-end;
+}
+.user-message .message-content {
+    background-color: var(--user-message-bg);
+    color: var(--text-primary);
+    border-top-right-radius: 4px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--accent-color);
+    color: var(--text-secondary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* --- Chat Input Form --- */
+.chat-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color);
+    background-color: #fff;
+}
+
+.chat-form {
+    display: flex;
+}
+
+.input-group {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+#message-input {
+    flex-grow: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#message-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+#send-button {
+    background-color: var(--accent-color);
+    color: var(--text-secondary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+#send-button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* --- Disclaimer --- */
+.disclaimer {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: var(--disclaimer-text);
+    max-width: 700px;
+    text-align: center;
+    line-height: 1.6;
+}

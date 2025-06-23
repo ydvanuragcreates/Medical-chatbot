@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical AI Assistant</title>
+    
+    <!-- Google Fonts: Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Link to external stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <main class="chat-container" id="chat-container">
+        <!-- Header Section -->
+        <header class="chat-header">
+            <h1><i class="fa-solid fa-heart-pulse"></i> Medical AI Assistant</h1>
+        </header>
+
+        <!-- Main Chat Window for displaying messages -->
+        <section class="chat-window" id="chat-window">
+            <!-- Initial Bot Message -->
+            <div class="message bot-message">
+                <div class="avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>Hello! I am your Medical AI Assistant. How can I help you today? Please note, I am not a substitute for professional medical advice.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Form for user input -->
+        <footer class="chat-footer">
+            <form class="chat-form" id="chat-form">
+                <div class="input-group">
+                    <input type="text" id="message-input" placeholder="Type your medical question here..." autocomplete="off">
+                    <button type="submit" id="send-button" aria-label="Send Message">
+                        <span>Send</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </footer>
+    </main>
+    
+    <!-- Disclaimer outside the main chat container -->
+    <p class="disclaimer">
+        This is an AI-powered assistant. The information provided is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider.
+    </p>
+
+    <!-- =============================================== -->
+    <!-- JAVASCRIPT LOGIC TO POWER THE CHAT -->
+    <!-- =============================================== -->
+    <script>
+        // Get references to the HTML elements we will interact with
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const chatWindow = document.getElementById('chat-window');
+        const sendButton = document.getElementById('send-button');
+
+        // This function handles the form submission
+        chatForm.addEventListener('submit', function(event) {
+            // 1. Prevent the default form submission behavior (reloading the page)
+            event.preventDefault();
+
+            // 2. Get the user's message and clear the input field
+            const userMessage = messageInput.value.trim();
+            if (userMessage === '') {
+                return; // Don't send empty messages
+            }
+            messageInput.value = '';
+
+            // 3. Display the user's message immediately in the chat window
+            appendMessage(userMessage, 'user-message');
+
+            // 4. Show a "thinking" indicator while waiting for the bot's response
+            showTypingIndicator();
+
+            // 5. Send the user's message to the Flask backend
+            fetch('/get', {
+                method: 'POST',
+                body: new URLSearchParams({ msg: userMessage }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .then(response => response.text()) // Get the response from the server as text
+            .then(botResponse => {
+                // 6. Remove the typing indicator
+                removeTypingIndicator();
+                // 7. Display the bot's final answer
+                appendMessage(botResponse, 'bot-message');
+            })
+            .catch(error => {
+                // 8. Handle any errors that occur
+                removeTypingIndicator();
+                appendMessage('Sorry, something went wrong. Please try again.', 'bot-message error');
+                console.error('Error:', error);
+            });
+        });
+
+        // Helper function to add a new message to the chat window
+        function appendMessage(text, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', className);
+
+            let messageContent = '';
+            if (className.includes('bot-message')) {
+                // Add the avatar for bot messages
+                messageContent += `
+                    <div class="avatar">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>`;
+            }
+            messageContent += `
+                <div class="message-content">
+                    <p>${text}</p>
+                </div>`;
+            
+            messageDiv.innerHTML = messageContent;
+            chatWindow.appendChild(messageDiv);
+
+            // Automatically scroll to the bottom to see the latest message
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+        
+        // Helper function to show a "Bot is typing..." message
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.classList.add('message', 'bot-message', 'typing-indicator');
+            typingDiv.innerHTML = `
+                <div class="avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p><i>Typing...</i></p>
+                </div>`;
+            chatWindow.appendChild(typingDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Helper function to remove the typing indicator
+        function removeTypingIndicator() {
+            const indicator = document.querySelector('.typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+    </script>
+
+</body>
+</html>
