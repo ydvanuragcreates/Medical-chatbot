@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical AI Assistant</title>
     
-    <!-- Google Fonts: Roboto -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -21,18 +21,64 @@
     <main class="chat-container" id="chat-container">
         <!-- Header Section -->
         <header class="chat-header">
-            <h1><i class="fa-solid fa-heart-pulse"></i> Medical AI Assistant</h1>
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div class="header-text">
+                        <h1>Medical AI Assistant</h1>
+                        <span class="status-indicator">
+                            <span class="status-dot"></span>
+                            Online
+                        </span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" id="save-chat" title="Save conversation">
+                        <i class="fa-solid fa-bookmark"></i>
+                    </button>
+                    <button class="header-btn" id="view-saved" title="View saved conversations">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </button>
+                    <button class="header-btn" id="back-btn" title="Go back to home">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button class="header-btn" id="clear-chat" title="Clear conversation">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
         </header>
 
-        <!-- Main Chat Window for displaying messages -->
+        <!-- Main Chat Window -->
         <section class="chat-window" id="chat-window">
-            <!-- Initial Bot Message -->
-            <div class="message bot-message">
-                <div class="avatar">
-                    <i class="fa-solid fa-robot"></i>
+            <!-- Welcome Message -->
+            <div class="welcome-section">
+                <div class="welcome-icon">
+                    <i class="fa-solid fa-stethoscope"></i>
                 </div>
-                <div class="message-content">
-                    <p>Hello! I am your Medical AI Assistant. How can I help you today? Please note, I am not a substitute for professional medical advice.</p>
+                <h2>Welcome to Medical AI Assistant</h2>
+                <p>I'm here to help answer your medical questions. Please note that I provide information only and am not a substitute for professional medical advice.</p>
+                
+                <!-- Quick Action Buttons -->
+                <div class="quick-actions">
+                    <button class="quick-btn" data-question="What are the symptoms of diabetes?">
+                        <i class="fa-solid fa-droplet"></i>
+                        Diabetes Symptoms
+                    </button>
+                    <button class="quick-btn" data-question="How can I prevent heart disease?">
+                        <i class="fa-solid fa-heart"></i>
+                        Heart Health
+                    </button>
+                    <button class="quick-btn" data-question="What causes high blood pressure?">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        Blood Pressure
+                    </button>
+                    <button class="quick-btn" data-question="Tell me about common cold remedies">
+                        <i class="fa-solid fa-thermometer"></i>
+                        Cold Remedies
+                    </button>
                 </div>
             </div>
         </section>
@@ -41,50 +87,400 @@
         <footer class="chat-footer">
             <form class="chat-form" id="chat-form">
                 <div class="input-group">
-                    <input type="text" id="message-input" placeholder="Type your medical question here..." autocomplete="off">
+                    <input 
+                        type="text" 
+                        id="message-input" 
+                        placeholder="Ask me anything about health and medicine..." 
+                        autocomplete="off"
+                        maxlength="500"
+                    >
                     <button type="submit" id="send-button" aria-label="Send Message">
-                        <span>Send</span>
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
+                </div>
+                <div class="input-footer">
+                    <span class="char-count" id="char-count">0/500</span>
+                    <span class="disclaimer-mini">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Not medical advice
+                    </span>
                 </div>
             </form>
         </footer>
     </main>
     
-    <!-- Disclaimer outside the main chat container -->
-    <p class="disclaimer">
-        This is an AI-powered assistant. The information provided is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider.
-    </p>
+    <!-- Saved Conversations Modal -->
+    <div class="modal" id="saved-conversations-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-folder-open"></i> Saved Conversations</h2>
+                <button class="close-modal" id="close-modal">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="saved-conversations-list">
+                <div class="empty-state">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p>No saved conversations yet</p>
+                    <span>Start chatting and save your conversations to view them here</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- =============================================== -->
-    <!-- JAVASCRIPT LOGIC TO POWER THE CHAT -->
-    <!-- =============================================== -->
+    <!-- Disclaimer -->
+    <div class="disclaimer-banner">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>
+            <strong>Medical Disclaimer:</strong> This AI assistant provides general information only. 
+            Always consult qualified healthcare professionals for medical advice, diagnosis, or treatment.
+        </p>
+    </div>
+
+    <!-- JavaScript -->
     <script>
-        // Get references to the HTML elements we will interact with
+        // Get references to HTML elements
         const chatForm = document.getElementById('chat-form');
         const messageInput = document.getElementById('message-input');
         const chatWindow = document.getElementById('chat-window');
         const sendButton = document.getElementById('send-button');
+        const clearChatBtn = document.getElementById('clear-chat');
+        const saveChatBtn = document.getElementById('save-chat');
+        const viewSavedBtn = document.getElementById('view-saved');
+        const backBtn = document.getElementById('back-btn');
+        const charCount = document.getElementById('char-count');
+        const quickBtns = document.querySelectorAll('.quick-btn');
+        const modal = document.getElementById('saved-conversations-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const savedConversationsList = document.getElementById('saved-conversations-list');
 
-        // This function handles the form submission
+        let messageCount = 0;
+        let conversationHistory = [];
+        
+        // Load saved conversations from localStorage
+        function getSavedConversations() {
+            const saved = localStorage.getItem('medicalChatConversations');
+            return saved ? JSON.parse(saved) : [];
+        }
+        
+        // Save conversations to localStorage
+        function saveConversationsToStorage(conversations) {
+            localStorage.setItem('medicalChatConversations', JSON.stringify(conversations));
+        }
+
+        // Character counter
+        messageInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = `${length}/500`;
+            
+            if (length > 450) {
+                charCount.style.color = '#e74c3c';
+            } else {
+                charCount.style.color = '#95a5a6';
+            }
+        });
+
+        // Quick action buttons
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const question = this.getAttribute('data-question');
+                messageInput.value = question;
+                messageInput.focus();
+                
+                // Optionally auto-submit
+                setTimeout(() => {
+                    chatForm.dispatchEvent(new Event('submit'));
+                }, 300);
+            });
+        });
+
+        // Back button functionality
+        backBtn.addEventListener('click', function() {
+            if (messageCount > 0) {
+                if (confirm('Are you sure you want to go back? Your conversation will be lost unless you save it.')) {
+                    resetChat();
+                }
+            } else {
+                resetChat();
+            }
+        });
+
+        // Save conversation functionality
+        saveChatBtn.addEventListener('click', function() {
+            if (conversationHistory.length === 0) {
+                alert('No conversation to save yet. Start chatting first!');
+                return;
+            }
+
+            // Get existing conversations
+            const savedConversations = getSavedConversations();
+            
+            // Create new conversation object
+            const newConversation = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                dateFormatted: new Date().toLocaleString(),
+                messages: [...conversationHistory],
+                preview: conversationHistory[0].text.substring(0, 60) + '...'
+            };
+            
+            // Add to beginning of array (most recent first)
+            savedConversations.unshift(newConversation);
+            
+            // Keep only last 20 conversations
+            if (savedConversations.length > 20) {
+                savedConversations.pop();
+            }
+            
+            // Save to localStorage
+            saveConversationsToStorage(savedConversations);
+            
+            // Show success message
+            showNotification('Conversation saved successfully!', 'success');
+        });
+        
+        // View saved conversations
+        viewSavedBtn.addEventListener('click', function() {
+            displaySavedConversations();
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Close modal
+        closeModalBtn.addEventListener('click', function() {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Display saved conversations
+        function displaySavedConversations() {
+            const conversations = getSavedConversations();
+            
+            if (conversations.length === 0) {
+                savedConversationsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No saved conversations yet</p>
+                        <span>Start chatting and save your conversations to view them here</span>
+                    </div>
+                `;
+                return;
+            }
+            
+            savedConversationsList.innerHTML = conversations.map(conv => `
+                <div class="saved-conversation-item" data-id="${conv.id}">
+                    <div class="conversation-header">
+                        <div class="conversation-info">
+                            <h3><i class="fa-solid fa-comments"></i> Conversation</h3>
+                            <span class="conversation-date">${conv.dateFormatted}</span>
+                        </div>
+                        <div class="conversation-actions">
+                            <button class="action-btn view-btn" onclick="viewConversation(${conv.id})" title="View">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="action-btn download-btn" onclick="downloadConversation(${conv.id})" title="Download">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteConversation(${conv.id})" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="conversation-preview">${conv.preview}</p>
+                    <div class="conversation-stats">
+                        <span><i class="fa-solid fa-message"></i> ${conv.messages.length} messages</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // View conversation details
+        window.viewConversation = function(id) {
+            const conversations = getSavedConversations();
+            const conversation = conversations.find(c => c.id === id);
+            
+            if (!conversation) return;
+            
+            // Create detailed view
+            savedConversationsList.innerHTML = `
+                <div class="conversation-detail">
+                    <button class="back-to-list" onclick="displaySavedConversations()">
+                        <i class="fa-solid fa-arrow-left"></i> Back to list
+                    </button>
+                    <div class="detail-header">
+                        <h3>Conversation Details</h3>
+                        <span>${conversation.dateFormatted}</span>
+                    </div>
+                    <div class="detail-messages">
+                        ${conversation.messages.map(msg => `
+                            <div class="detail-message ${msg.role}">
+                                <div class="detail-message-header">
+                                    <strong>${msg.role === 'user' ? 'You' : 'AI Assistant'}</strong>
+                                    <span>${msg.time}</span>
+                                </div>
+                                <p>${escapeHtml(msg.text)}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        };
+        
+        // Download conversation
+        window.downloadConversation = function(id) {
+            const conversations = getSavedConversations();
+            const conversation = conversations.find(c => c.id === id);
+            
+            if (!conversation) return;
+            
+            let conversationText = '=== Medical AI Assistant Conversation ===\n';
+            conversationText += `Date: ${conversation.dateFormatted}\n`;
+            conversationText += '='.repeat(50) + '\n\n';
+
+            conversation.messages.forEach((msg) => {
+                conversationText += `${msg.role === 'user' ? 'You' : 'AI Assistant'} [${msg.time}]:\n`;
+                conversationText += `${msg.text}\n\n`;
+            });
+
+            conversationText += '\n' + '='.repeat(50) + '\n';
+            conversationText += 'Disclaimer: This conversation is for informational purposes only.\n';
+            conversationText += 'Always consult qualified healthcare professionals for medical advice.\n';
+
+            const blob = new Blob([conversationText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `medical-chat-${new Date(conversation.date).toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('Conversation downloaded!', 'success');
+        };
+        
+        // Delete conversation
+        window.deleteConversation = function(id) {
+            if (!confirm('Are you sure you want to delete this conversation?')) return;
+            
+            let conversations = getSavedConversations();
+            conversations = conversations.filter(c => c.id !== id);
+            saveConversationsToStorage(conversations);
+            displaySavedConversations();
+            
+            showNotification('Conversation deleted', 'info');
+        };
+
+        // Clear chat functionality
+        clearChatBtn.addEventListener('click', function() {
+            if (messageCount === 0) {
+                alert('No conversation to clear.');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to clear the conversation?')) {
+                resetChat();
+            }
+        });
+
+        // Function to reset chat
+        function resetChat() {
+            chatWindow.innerHTML = `
+                    <div class="welcome-section">
+                        <div class="welcome-icon">
+                            <i class="fa-solid fa-stethoscope"></i>
+                        </div>
+                        <h2>Welcome to Medical AI Assistant</h2>
+                        <p>I'm here to help answer your medical questions. Please note that I provide information only and am not a substitute for professional medical advice.</p>
+                        
+                        <div class="quick-actions">
+                            <button class="quick-btn" data-question="What are the symptoms of diabetes?">
+                                <i class="fa-solid fa-droplet"></i>
+                                Diabetes Symptoms
+                            </button>
+                            <button class="quick-btn" data-question="How can I prevent heart disease?">
+                                <i class="fa-solid fa-heart"></i>
+                                Heart Health
+                            </button>
+                            <button class="quick-btn" data-question="What causes high blood pressure?">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                                Blood Pressure
+                            </button>
+                            <button class="quick-btn" data-question="Tell me about common cold remedies">
+                                <i class="fa-solid fa-thermometer"></i>
+                                Cold Remedies
+                            </button>
+                        </div>
+                    </div>
+                `;
+            messageCount = 0;
+            conversationHistory = [];
+            
+            // Re-attach event listeners to new quick buttons
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    messageInput.value = question;
+                    messageInput.focus();
+                    setTimeout(() => {
+                        chatForm.dispatchEvent(new Event('submit'));
+                    }, 300);
+                });
+            });
+        }
+
+        // Form submission
         chatForm.addEventListener('submit', function(event) {
-            // 1. Prevent the default form submission behavior (reloading the page)
             event.preventDefault();
 
-            // 2. Get the user's message and clear the input field
             const userMessage = messageInput.value.trim();
             if (userMessage === '') {
-                return; // Don't send empty messages
+                return;
             }
-            messageInput.value = '';
+            
+            // Remove welcome section on first message
+            if (messageCount === 0) {
+                const welcomeSection = document.querySelector('.welcome-section');
+                if (welcomeSection) {
+                    welcomeSection.remove();
+                }
+            }
+            messageCount++;
 
-            // 3. Display the user's message immediately in the chat window
+            messageInput.value = '';
+            charCount.textContent = '0/500';
+            charCount.style.color = '#95a5a6';
+
+            // Store user message in history
+            const timestamp = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            conversationHistory.push({
+                role: 'user',
+                text: userMessage,
+                time: timestamp
+            });
+
+            // Display user message
             appendMessage(userMessage, 'user-message');
 
-            // 4. Show a "thinking" indicator while waiting for the bot's response
+            // Show typing indicator
             showTypingIndicator();
 
-            // 5. Send the user's message to the Flask backend
+            // Disable send button
+            sendButton.disabled = true;
+            sendButton.style.opacity = '0.6';
+
+            // Send to backend
             fetch('/get', {
                 method: 'POST',
                 body: new URLSearchParams({ msg: userMessage }),
@@ -92,68 +488,158 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             })
-            .then(response => response.text()) // Get the response from the server as text
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server error');
+                }
+                return response.text();
+            })
             .then(botResponse => {
-                // 6. Remove the typing indicator
                 removeTypingIndicator();
-                // 7. Display the bot's final answer
+                
+                // Store bot response in history
+                const botTimestamp = new Date().toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                conversationHistory.push({
+                    role: 'assistant',
+                    text: botResponse,
+                    time: botTimestamp
+                });
+                
                 appendMessage(botResponse, 'bot-message');
+                
+                // Re-enable send button
+                sendButton.disabled = false;
+                sendButton.style.opacity = '1';
             })
             .catch(error => {
-                // 8. Handle any errors that occur
                 removeTypingIndicator();
-                appendMessage('Sorry, something went wrong. Please try again.', 'bot-message error');
+                appendMessage('Sorry, I encountered an error. Please try again or check your connection.', 'bot-message error');
                 console.error('Error:', error);
+                
+                // Re-enable send button
+                sendButton.disabled = false;
+                sendButton.style.opacity = '1';
             });
         });
 
-        // Helper function to add a new message to the chat window
+        // Append message to chat
         function appendMessage(text, className) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', className);
 
-            let messageContent = '';
-            if (className.includes('bot-message')) {
-                // Add the avatar for bot messages
-                messageContent += `
-                    <div class="avatar">
-                        <i class="fa-solid fa-robot"></i>
-                    </div>`;
-            }
-            messageContent += `
-                <div class="message-content">
-                    <p>${text}</p>
-                </div>`;
-            
-            messageDiv.innerHTML = messageContent;
-            chatWindow.appendChild(messageDiv);
+            const timestamp = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
 
-            // Automatically scroll to the bottom to see the latest message
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            if (className.includes('bot-message')) {
+                messageDiv.innerHTML = `
+                    <div class="avatar bot-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="message-bubble">
+                        <div class="message-content">${formatMessage(text)}</div>
+                        <div class="message-time">${timestamp}</div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        <div class="message-content">${escapeHtml(text)}</div>
+                        <div class="message-time">${timestamp}</div>
+                    </div>
+                    <div class="avatar user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                `;
+            }
+            
+            chatWindow.appendChild(messageDiv);
+            
+            // Smooth scroll animation
+            chatWindow.scrollTo({
+                top: chatWindow.scrollHeight,
+                behavior: 'smooth'
+            });
         }
-        
-        // Helper function to show a "Bot is typing..." message
+
+        // Format bot message (preserve line breaks, etc.)
+        function formatMessage(text) {
+            return escapeHtml(text)
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Show typing indicator
         function showTypingIndicator() {
             const typingDiv = document.createElement('div');
             typingDiv.classList.add('message', 'bot-message', 'typing-indicator');
             typingDiv.innerHTML = `
-                <div class="avatar">
+                <div class="avatar bot-avatar">
                     <i class="fa-solid fa-robot"></i>
                 </div>
-                <div class="message-content">
-                    <p><i>Typing...</i></p>
-                </div>`;
+                <div class="message-bubble typing-bubble">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
             chatWindow.appendChild(typingDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            chatWindow.scrollTo({
+                top: chatWindow.scrollHeight,
+                behavior: 'smooth'
+            });
         }
 
-        // Helper function to remove the typing indicator
+        // Remove typing indicator
         function removeTypingIndicator() {
             const indicator = document.querySelector('.typing-indicator');
             if (indicator) {
                 indicator.remove();
             }
         }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Focus input on load
+        window.addEventListener('load', () => {
+            messageInput.focus();
+        });
     </script>
 
 </body>

@@ -10,9 +10,9 @@ from src.prompt import system_prompt
 
 # Import the correct LangChain components
 from langchain_pinecone import PineconeVectorStore
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_openai import ChatOpenAI
+from langchain_classic.chains import create_retrieval_chain
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
 # --- App Initialization ---
@@ -21,7 +21,7 @@ app = Flask(__name__)
 # --- Load Environment Variables ---
 load_dotenv()
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 # --- Initialize Core Components ---
 embeddings = download_hugging_face_embeddings()
@@ -41,10 +41,12 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-# Initialize the LLM (Gemini)
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",
-                           temperature=0.4,
-                           google_api_key=GOOGLE_API_KEY)
+# Initialize the LLM (OpenAI)
+llm = ChatOpenAI(
+    model="gpt-3.5-turbo",
+    temperature=0.4,
+    openai_api_key=OPENAI_API_KEY
+)
 
 # Create the RAG Chain
 question_answer_chain = create_stuff_documents_chain(llm, prompt)
@@ -58,16 +60,22 @@ def index():
 
 @app.route("/get", methods=["GET", "POST"])
 def chat():
-    msg = request.form["msg"]
-    input_text = msg
-    print(f"User input: {input_text}")
+    try:
+        msg = request.form["msg"]
+        input_text = msg
+        print(f"User input: {input_text}")
 
-    response = rag_chain.invoke({"input": input_text})
-    print(f"Bot response: {response['answer']}")
-    
-    return str(response["answer"])
+        response = rag_chain.invoke({"input": input_text})
+        print(f"Bot response: {response['answer']}")
+        
+        return str(response["answer"])
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return f"Error: {str(e)}", 500
 
 # --- Main Execution Block ---
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)
