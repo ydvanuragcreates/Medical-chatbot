@@ -7,14 +7,38 @@ An intelligent medical chatbot powered by OpenAI and LangChain that provides med
 ![Flask](https://img.shields.io/badge/Flask-3.1.1-lightgrey)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5-orange)
 
+## 📸 Screenshots
+
+### Welcome Screen
+![Welcome Screen](screenshots/Screenshot%202025-12-01%20232455.png)
+*Modern welcome screen with quick action buttons for common medical questions*
+
+### Chat Interface
+![Chat Interface](screenshots/Screenshot%202025-12-01%20232608.png)
+*Clean and intuitive chat interface with real-time responses*
+
+### Active Conversation
+![Active Conversation](screenshots/Screenshot%202025-12-01%20232625.png)
+*Real-time medical Q&A with AI assistant showing detailed responses*
+
+### Conversation Features
+![Conversation Features](screenshots/Screenshot%202025-12-01%20233014.png)
+*Advanced features including save, view history, and conversation management*
+
 ## ✨ Features
 
 - 🤖 **AI-Powered Responses**: Uses OpenAI's GPT-3.5-turbo for intelligent medical information
 - 📚 **Knowledge Base**: Retrieves relevant information from medical documents stored in Pinecone
-- 💬 **Interactive UI**: Modern, responsive chat interface
+- 💬 **Interactive UI**: Modern, responsive chat interface with smooth animations
 - 🔍 **Semantic Search**: Uses sentence transformers for accurate document retrieval
 - ⚡ **Real-time Responses**: Fast and efficient response generation
-- 🎨 **Beautiful Design**: Clean, professional medical-themed interface
+- 🎨 **Beautiful Design**: Clean, professional medical-themed interface with gradient backgrounds
+- 💾 **Save Conversations**: Save and manage your chat history locally
+- 📱 **Fully Responsive**: Works seamlessly on desktop, tablet, and mobile devices
+- ⚙️ **Quick Actions**: Pre-defined questions for common medical topics
+- 🔔 **Smart Notifications**: Beautiful toast notifications for user feedback
+- 📥 **Export Chats**: Download conversations as text files
+- 🎯 **User-Friendly**: Intuitive interface with character counter and typing indicators
 
 ## 🚀 Quick Start
 
@@ -90,8 +114,16 @@ Medical-chatbot/
 │   └── chat.html          # Chat interface HTML
 ├── static/
 │   └── style.css          # Styling for the chat interface
+├── screenshots/           # Application screenshots (for README)
+│   ├── chat-interface.png
+│   ├── conversation.png
+│   ├── saved-conversations.png
+│   ├── conversation-details.png
+│   └── mobile-view.png
 └── README.md              # This file
 ```
+
+
 
 ## 🔧 Configuration
 
