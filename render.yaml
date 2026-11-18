@@ -1,12 +1,18 @@
 services:
   - type: web
     name: medical-chatbot
-    env: python
-    runtime: python-3.12
+    runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
       - key: PINECONE_API_KEY
         sync: false
-      - key: GOOGLE_API_KEY
+      - key: OPENAI_API_KEY
         sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: PINECONE_INDEX
+        value: medicalbot-v2
+
